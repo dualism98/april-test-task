@@ -12,9 +12,14 @@ const PostsStack: React.FC = () => {
     <Stack.Navigator>
       <Stack.Screen
         name={NavigationKeys.PostsListScreen}
+        options={{headerTitle: 'Posts'}}
         component={PostsListScreen}
       />
-      <Stack.Screen name={NavigationKeys.PostScreen} component={PostScreen} />
+      <Stack.Screen
+        name={NavigationKeys.PostScreen}
+        options={{headerTitle: 'Post'}}
+        component={PostScreen}
+      />
     </Stack.Navigator>
   );
 };

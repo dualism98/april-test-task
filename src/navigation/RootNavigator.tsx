@@ -4,8 +4,9 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import NavigationKeys from './NavigationKeys';
 import PostsStack from './stacks/PostsStack';
 import SettingsScreen from '../screens/SettingsScreen';
+import {RootParamsList} from './types';
 
-const BottomTab = createBottomTabNavigator();
+const BottomTab = createBottomTabNavigator<RootParamsList>();
 
 const RootNavigator: React.FC = () => {
   return (
