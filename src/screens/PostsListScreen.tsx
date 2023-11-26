@@ -3,6 +3,7 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {useCallback} from 'react';
 import {FlatList, StyleSheet, View} from 'react-native';
+import {debounce} from 'lodash';
 
 import {PostsStackParamsList} from '../navigation/types';
 import NavigationKeys from '../navigation/NavigationKeys';
@@ -38,27 +39,36 @@ const PostsListScreen: React.FC = () => {
     dispatch(fetchPostsData());
   }, []);
 
-  const handlePostPress = useCallback(() => {
-
-  }, []);
+  const handlePostPress = useCallback(
+    debounce(
+      (postId: number) => {
+        navigation.push(NavigationKeys.PostScreen, {postId});
+      },
+      300,
+      {leading: true, trailing: false},
+    ),
+    [],
+  );
 
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={posts}
-        keyExtractor={item => String(item.id)}
-        renderItem={data => (
-          <PostItem postId={data.item.id} onPress={handlePostPress} />
-        )}
-        contentInsetAdjustmentBehavior={'automatic'}
-      />
-    </View>
+    <FlatList
+      data={posts}
+      keyExtractor={item => String(item.id)}
+      renderItem={data => (
+        <PostItem
+          postId={data.item.id}
+          onPress={() => handlePostPress(data.item.id)}
+        />
+      )}
+      contentInsetAdjustmentBehavior={'automatic'}
+      contentContainerStyle={styles.container}
+    />
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    gap: 16,
   },
 });
 
