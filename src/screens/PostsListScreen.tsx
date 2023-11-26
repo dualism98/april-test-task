@@ -33,7 +33,7 @@ const PostsListScreen: React.FC = () => {
             post.body.toLowerCase().includes(search.toLowerCase()),
         )
         .slice(0, POSTS_PER_PAGE * page),
-    [search, page],
+    [search, page, data],
   );
 
   const navigation = useNavigation<PostsListScreenNavigationProp>();
