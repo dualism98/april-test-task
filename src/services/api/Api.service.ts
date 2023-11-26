@@ -1,7 +1,8 @@
+import {Post} from '../../types/posts';
 import axiosInstance from './axiosInstance';
 
 class ApiService {
-  async getPostsList() {
+  async getPostsList(): Promise<Post[]> {
     try {
       const response = await axiosInstance.get('/posts');
       return response.data;
@@ -10,7 +11,7 @@ class ApiService {
     }
   }
 
-  async getPostById(postId: number) {
+  async getPostById(postId: number): Promise<Post> {
     try {
       const response = await axiosInstance.get(`/posts/${postId}`);
       return response.data;
