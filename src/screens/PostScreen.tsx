@@ -1,15 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
-import React, {useCallback} from 'react';
+import React from 'react';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {ScrollView, StyleSheet, Text} from 'react-native';
 
 import {PostsStackParamsList} from '../navigation/types';
 import NavigationKeys from '../navigation/NavigationKeys';
-import ApiService from '../services/api/Api.service';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {Post} from '../types/posts';
 import indent from '../theme/indent';
 import {fontSizes} from '../theme/fonts';
+import {useGetPostByIdQuery} from '../services/api/postsApi';
 
 type PostScreenRouteProp = RouteProp<
   PostsStackParamsList,
@@ -22,11 +21,11 @@ type PostScreenNavigationProp = NativeStackNavigationProp<
 >;
 
 const PostScreen: React.FC = () => {
-  const [post, setPost] = React.useState<Post | null>(null);
-
-  const navigation = useNavigation<PostScreenNavigationProp>();
   const route = useRoute<PostScreenRouteProp>();
   const {postId} = route.params;
+  const {data} = useGetPostByIdQuery(postId);
+
+  const navigation = useNavigation<PostScreenNavigationProp>();
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -34,19 +33,10 @@ const PostScreen: React.FC = () => {
     });
   }, []);
 
-  React.useEffect(() => {
-    loadPostData();
-  }, []);
-
-  const loadPostData = useCallback(async () => {
-    const fetchedPost = await ApiService.getPostById(postId);
-    setPost(fetchedPost);
-  }, []);
-
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>{post?.title}</Text>
-      <Text>{post?.body}</Text>
+      <Text style={styles.title}>{data?.title}</Text>
+      <Text>{data?.body}</Text>
     </ScrollView>
   );
 };

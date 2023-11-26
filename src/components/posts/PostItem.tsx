@@ -1,11 +1,11 @@
 import React from 'react';
 import {StyleSheet, Text, TouchableOpacity} from 'react-native';
 
-import useAppSelector from '../../hooks/useAppSelector';
 import {colors} from '../../theme/colors';
 import indent from '../../theme/indent';
 import {borderRadius} from '../../theme/constants';
 import {fontSizes} from '../../theme/fonts';
+import {useGetPostByIdQuery} from '../../services/api/postsApi';
 
 interface Props {
   postId: number;
@@ -13,16 +13,14 @@ interface Props {
 }
 
 const PostItem: React.FC<Props> = ({postId, onPress}) => {
-  const post = useAppSelector(state =>
-    state.posts.posts.find(({id}) => id === postId),
-  );
+  const {data} = useGetPostByIdQuery(postId);
 
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <Text style={styles.title} numberOfLines={1}>
-        {post?.title}
+        {data?.title}
       </Text>
-      <Text numberOfLines={2}>{post?.body}</Text>
+      <Text numberOfLines={2}>{data?.body}</Text>
     </TouchableOpacity>
   );
 };

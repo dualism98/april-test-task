@@ -7,11 +7,9 @@ import {debounce, throttle} from 'lodash';
 
 import {PostsStackParamsList} from '../navigation/types';
 import NavigationKeys from '../navigation/NavigationKeys';
-import {fetchPostsData} from '../features/posts/postsThunks';
-import useAppSelector from '../hooks/useAppSelector';
-import useAppDispatch from '../hooks/useAppDispatch';
-import PostItem from '../features/posts/PostItem';
+import PostItem from '../components/posts/PostItem';
 import indent from '../theme/indent';
+import {useGetPostsQuery} from '../services/api/postsApi';
 
 type PostsListScreenNavigationProp = NativeStackNavigationProp<
   PostsStackParamsList,
@@ -25,11 +23,11 @@ const PostsListScreen: React.FC = () => {
   const [search, setSearch] = React.useState('');
   const [page, setPage] = React.useState(INITIAL_PAGE);
 
-  const {posts} = useAppSelector(state => state.posts);
+  const {data} = useGetPostsQuery();
   const filteredPosts = useMemo(
     () =>
-      posts
-        .filter(
+      data
+        ?.filter(
           post =>
             post.title.toLowerCase().includes(search.toLowerCase()) ||
             post.body.toLowerCase().includes(search.toLowerCase()),
@@ -38,7 +36,6 @@ const PostsListScreen: React.FC = () => {
     [search, page],
   );
 
-  const dispatch = useAppDispatch();
   const navigation = useNavigation<PostsListScreenNavigationProp>();
 
   React.useLayoutEffect(() => {
@@ -50,14 +47,6 @@ const PostsListScreen: React.FC = () => {
         },
       },
     });
-  }, []);
-
-  React.useEffect(() => {
-    loadPosts();
-  }, []);
-
-  const loadPosts = useCallback(() => {
-    dispatch(fetchPostsData());
   }, []);
 
   const handlePostPress = useCallback(
@@ -84,11 +73,8 @@ const PostsListScreen: React.FC = () => {
     <FlatList
       data={filteredPosts}
       keyExtractor={item => String(item.id)}
-      renderItem={data => (
-        <PostItem
-          postId={data.item.id}
-          onPress={() => handlePostPress(data.item.id)}
-        />
+      renderItem={({item}) => (
+        <PostItem postId={item.id} onPress={() => handlePostPress(item.id)} />
       )}
       contentInsetAdjustmentBehavior={'automatic'}
       contentContainerStyle={styles.container}
