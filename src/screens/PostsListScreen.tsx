@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import React, {useCallback} from 'react';
+import React, {useCallback, useMemo} from 'react';
 import {FlatList, StyleSheet} from 'react-native';
-import {debounce} from 'lodash';
+import {debounce, throttle} from 'lodash';
 
 import {PostsStackParamsList} from '../navigation/types';
 import NavigationKeys from '../navigation/NavigationKeys';
@@ -18,16 +18,36 @@ type PostsListScreenNavigationProp = NativeStackNavigationProp<
   NavigationKeys.PostsListScreen
 >;
 
+const POSTS_PER_PAGE = 10;
+const INITIAL_PAGE = 1;
+
 const PostsListScreen: React.FC = () => {
   const [search, setSearch] = React.useState('');
+  const [page, setPage] = React.useState(INITIAL_PAGE);
+
   const {posts} = useAppSelector(state => state.posts);
+  const filteredPosts = useMemo(
+    () =>
+      posts
+        .filter(
+          post =>
+            post.title.toLowerCase().includes(search.toLowerCase()) ||
+            post.body.toLowerCase().includes(search.toLowerCase()),
+        )
+        .slice(0, POSTS_PER_PAGE * page),
+    [search, page],
+  );
+
   const dispatch = useAppDispatch();
   const navigation = useNavigation<PostsListScreenNavigationProp>();
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerSearchBarOptions: {
-        onChangeText: event => setSearch(event.nativeEvent.text),
+        onChangeText: event => {
+          setSearch(event.nativeEvent.text);
+          setPage(INITIAL_PAGE);
+        },
       },
     });
   }, []);
@@ -51,9 +71,18 @@ const PostsListScreen: React.FC = () => {
     [],
   );
 
+  const onEndReached = useCallback(
+    throttle(({distanceFromEnd}) => {
+      if (distanceFromEnd > 0) {
+        setPage(prevPage => prevPage + 1);
+      }
+    }, 50),
+    [],
+  );
+
   return (
     <FlatList
-      data={posts}
+      data={filteredPosts}
       keyExtractor={item => String(item.id)}
       renderItem={data => (
         <PostItem
@@ -63,6 +92,8 @@ const PostsListScreen: React.FC = () => {
       )}
       contentInsetAdjustmentBehavior={'automatic'}
       contentContainerStyle={styles.container}
+      onEndReached={onEndReached}
+      onEndReachedThreshold={0.3}
     />
   );
 };
