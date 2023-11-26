@@ -7,6 +7,9 @@ import {PostsStackParamsList} from '../navigation/types';
 import NavigationKeys from '../navigation/NavigationKeys';
 import ApiService from '../services/api/Api.service';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {Post} from '../types/posts';
+import indent from '../theme/indent';
+import {fontSizes} from '../theme/fonts';
 
 type PostScreenRouteProp = RouteProp<
   PostsStackParamsList,
@@ -19,7 +22,7 @@ type PostScreenNavigationProp = NativeStackNavigationProp<
 >;
 
 const PostScreen: React.FC = () => {
-  const [post, setPost] = React.useState(null);
+  const [post, setPost] = React.useState<Post | null>(null);
 
   const navigation = useNavigation<PostScreenNavigationProp>();
   const route = useRoute<PostScreenRouteProp>();
@@ -42,7 +45,7 @@ const PostScreen: React.FC = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text>{post?.title}</Text>
+      <Text style={styles.title}>{post?.title}</Text>
       <Text>{post?.body}</Text>
     </ScrollView>
   );
@@ -51,6 +54,13 @@ const PostScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
+    padding: indent.m,
+    gap: indent.m,
+  },
+
+  title: {
+    fontSize: fontSizes.s,
+    fontWeight: '600',
   },
 });
 

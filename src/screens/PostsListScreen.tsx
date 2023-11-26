@@ -2,7 +2,7 @@
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {useCallback} from 'react';
-import {FlatList, StyleSheet, View} from 'react-native';
+import {FlatList, StyleSheet} from 'react-native';
 import {debounce} from 'lodash';
 
 import {PostsStackParamsList} from '../navigation/types';
@@ -11,6 +11,7 @@ import {fetchPostsData} from '../features/posts/postsThunks';
 import useAppSelector from '../hooks/useAppSelector';
 import useAppDispatch from '../hooks/useAppDispatch';
 import PostItem from '../features/posts/PostItem';
+import indent from '../theme/indent';
 
 type PostsListScreenNavigationProp = NativeStackNavigationProp<
   PostsStackParamsList,
@@ -19,7 +20,7 @@ type PostsListScreenNavigationProp = NativeStackNavigationProp<
 
 const PostsListScreen: React.FC = () => {
   const [search, setSearch] = React.useState('');
-  const {posts, loading} = useAppSelector(state => state.posts);
+  const {posts} = useAppSelector(state => state.posts);
   const dispatch = useAppDispatch();
   const navigation = useNavigation<PostsListScreenNavigationProp>();
 
@@ -68,7 +69,8 @@ const PostsListScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    gap: 16,
+    paddingVertical: indent.xs,
+    gap: indent.m,
   },
 });
 

@@ -1,6 +1,11 @@
 import React from 'react';
 import {StyleSheet, Text, TouchableOpacity} from 'react-native';
+
 import useAppSelector from '../../hooks/useAppSelector';
+import {colors} from '../../theme/colors';
+import indent from '../../theme/indent';
+import {borderRadius} from '../../theme/constants';
+import {fontSizes} from '../../theme/fonts';
 
 interface Props {
   postId: number;
@@ -14,16 +19,27 @@ const PostItem: React.FC<Props> = ({postId, onPress}) => {
 
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
-      <Text numberOfLines={1}>{post?.title}</Text>
+      <Text style={styles.title} numberOfLines={1}>
+        {post?.title}
+      </Text>
       <Text numberOfLines={2}>{post?.body}</Text>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
-    container: {
+  container: {
+    backgroundColor: colors.tints.white[90],
+    paddingHorizontal: indent.m,
+    paddingVertical: indent.s,
+    marginHorizontal: indent.m,
+    borderRadius: borderRadius.m,
+  },
 
-    },
+  title: {
+    fontSize: fontSizes.xs,
+    fontWeight: '600',
+  },
 });
 
 export default PostItem;
