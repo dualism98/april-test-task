@@ -4,12 +4,12 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React from 'react';
 import {FlatList, StyleSheet, View} from 'react-native';
 
-import {RootParamsList} from '../navigation/types';
+import {PostsStackParamsList} from '../navigation/types';
 import NavigationKeys from '../navigation/NavigationKeys';
 
 type PostsListScreenNavigationProp = NativeStackNavigationProp<
-  RootParamsList,
-  NavigationKeys.PostsStack
+  PostsStackParamsList,
+  NavigationKeys.PostsListScreen
 >;
 
 const PostsListScreen: React.FC = () => {
@@ -23,6 +23,15 @@ const PostsListScreen: React.FC = () => {
         onChangeText: event => setSearch(event.nativeEvent.text),
       },
     });
+  }, []);
+
+  React.useEffect(() => {
+    const timeout = setTimeout(
+      () => navigation.push(NavigationKeys.PostScreen, {postId: 1}),
+      2000,
+    );
+
+    return () => clearTimeout(timeout);
   }, []);
 
   return (
